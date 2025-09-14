@@ -1,23 +1,13 @@
-from enum import Enum
 import logging
 import arcgis
+import arcgis.gis
+import arcgis.graph
+import arcgis.install
+import arcgis.layers
+import arcgis.map
+import arcgis.notebook
 from ipywidgets import Layout
-# from arcgis.gis import GIS
-# from arcgis.map import Map
-# from arcgis.map import Scene
-# import pandas as pd
-
-
-class Basemaps(Enum):
-    SATELLITE = 'satellite'
-    HYBRID = 'hybrid'
-    TERRAIN = 'terrain'
-    OCEANS = 'oceans'
-    OSM = 'osm'
-    DARK_GRAY_VECTOR = 'dark-gray-vector'
-    GRAY_VECTOR = 'gray-vector'
-    STREETS_VECTOR = 'streets-vector'
-    TOPO_VECTOR = 'topo-vector'
+from src.enums import Basemaps, ItemTypes
 
 
 def main():
@@ -43,13 +33,22 @@ def get_map(gis: arcgis.GIS, basemap: Basemaps, height: int) -> arcgis.GIS.map:
     return map
 
 
-# def search_content_return_item():
-#     results = gis.content.search(
-#         query='hydro', max_items=20, item_type='Feature Service')
-#     for i, item in enumerate(results):
-#         print(i, item.title)
-#     map_layer = gis.content.get(results[1].id)
-#     map_layer
+def search_content_return_item(
+        gis: arcgis.GIS,
+        query: str,
+        max_items: int,
+        item_type: ItemTypes) -> arcgis.GIS.content:
+    results = gis.content.search(
+        query='hydro', 
+        max_items=max_items, 
+        item_type=item_type.value
+        )
+    for i, item in enumerate(results):
+        print(i, item.title)
+    user_input = input('enter item index:')
+    index = int(user_input)
+    content = gis.content.get(results[index].id)
+    return content
 
 
 if __name__ == "__main__":
