@@ -26,8 +26,13 @@ def get_GIS() -> arcgis.GIS:
     return gis
 
 
-def get_map(gis: arcgis.GIS, basemap: Basemaps, height: int) -> arcgis.GIS.map:
-    map = gis.map()
+def get_map(
+        gis: arcgis.GIS,
+        basemap: Basemaps,
+        height: int = 400,
+        location: str = ''
+        ) -> arcgis.GIS.map:
+    map = gis.map(location=location)
     map.basemap.basemap = basemap.value
     map.layout = Layout(height=f'{height}px')
     return map
@@ -39,8 +44,8 @@ def search_content_return_item(
         max_items: int,
         item_type: ItemTypes) -> arcgis.GIS.content:
     results = gis.content.search(
-        query='hydro', 
-        max_items=max_items, 
+        query='hydro',
+        max_items=max_items,
         item_type=item_type.value
         )
     for i, item in enumerate(results):
@@ -49,6 +54,12 @@ def search_content_return_item(
     index = int(user_input)
     content = gis.content.get(results[index].id)
     return content
+
+
+def add_layer_to_map(map: arcgis.GIS.map, layer: arcgis.GIS.content) -> None:
+    map.content.add(layer)
+    map.zoom_to_layer(layer)
+    return
 
 
 if __name__ == "__main__":
